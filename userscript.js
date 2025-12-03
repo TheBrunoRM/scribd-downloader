@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Scribd Downloader
 // @namespace    https://github.com/ThanhNguyxn/scribd-downloader
-// @version      1.1.0
+// @version      1.2.0
 // @description  📚 Download documents from Scribd for free as PDF
 // @author       ThanhNguyxn
 // @match        https://www.scribd.com/document/*
@@ -10,7 +10,7 @@
 // @match        https://www.scribd.com/read/*
 // @icon         https://www.scribd.com/favicon.ico
 // @grant        GM_addStyle
-// @grant        GM_openInTab
+// @grant        GM_setClipboard
 // @license      MIT
 // ==/UserScript==
 
@@ -109,7 +109,7 @@
             background: white;
             padding: 30px;
             border-radius: 20px;
-            max-width: 500px;
+            max-width: 550px;
             width: 90%;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
@@ -154,8 +154,8 @@
             color: #333;
         }
 
-        .modal-content .btn-warning {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        .modal-content .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
         }
 
@@ -189,11 +189,49 @@
             border-radius: 0 10px 10px 0;
         }
 
-        .info-box code {
-            background: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
+        .url-box {
+            background: #1e1e1e;
+            color: #4fc3f7;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            margin: 15px 0;
+            text-align: left;
+            user-select: all;
+        }
+
+        .step-list {
+            text-align: left;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .step-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .step-list li:last-child {
+            border-bottom: none;
+        }
+
+        .step-num {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
         }
     `);
 
@@ -201,7 +239,6 @@
 
     function getDocumentId() {
         const url = window.location.href;
-        // Match: /document/123456/ or /doc/123456/ or /embeds/123456/ or /read/123456/
         const match = url.match(/(?:document|doc|embeds|read)\/(\d+)/);
         return match ? match[1] : null;
     }
@@ -235,6 +272,21 @@
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    function copyToClipboard(text) {
+        if (typeof GM_setClipboard !== 'undefined') {
+            GM_setClipboard(text);
+            return true;
+        }
+        // Fallback
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        return true;
+    }
+
     // ==================== MAIN FUNCTIONS ====================
 
     async function scrollAllPages(progressCallback) {
@@ -242,19 +294,17 @@
         const totalPages = pages.length;
 
         if (totalPages === 0) {
-            // Try alternative selectors
             const altPages = document.querySelectorAll('.text_layer, .page_container, [data-page]');
             if (altPages.length > 0) {
                 for (let i = 0; i < altPages.length; i++) {
                     altPages[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    await sleep(400);
+                    await sleep(500);
                     if (progressCallback) {
                         progressCallback(Math.round(((i + 1) / altPages.length) * 50));
                     }
                 }
                 return;
             }
-            // Fallback: scroll the whole page
             const scrollHeight = document.documentElement.scrollHeight;
             const steps = 20;
             for (let i = 0; i <= steps; i++) {
@@ -269,7 +319,7 @@
 
         for (let i = 0; i < pages.length; i++) {
             pages[i].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            await sleep(400);
+            await sleep(500);
             if (progressCallback) {
                 progressCallback(Math.round(((i + 1) / totalPages) * 50));
             }
@@ -305,7 +355,6 @@
             } catch (e) {}
         });
 
-        // Clean document_scroller class
         const scrollers = document.querySelectorAll('.document_scroller');
         scrollers.forEach(el => {
             el.removeAttribute('class');
@@ -315,7 +364,6 @@
     }
 
     function cleanupForPrint() {
-        // Remove blur effects
         document.querySelectorAll('*').forEach(el => {
             try {
                 const style = window.getComputedStyle(el);
@@ -328,7 +376,6 @@
             } catch (e) {}
         });
 
-        // Make all pages visible
         document.querySelectorAll("[class*='page']").forEach(page => {
             page.style.visibility = 'visible';
             page.style.opacity = '1';
@@ -394,23 +441,6 @@
         modal.classList.add('show');
     }
 
-    function showInfoModal(title, message, buttons = []) {
-        let modal = document.getElementById('scribd-dl-modal');
-        if (!modal) {
-            modal = createModal();
-        }
-
-        const content = modal.querySelector('.modal-content');
-        content.innerHTML = `
-            <h2>${title}</h2>
-            <div style="text-align: left; color: #666; line-height: 1.8;">${message}</div>
-            <div class="btn-group" style="margin-top: 20px;">
-                ${buttons.map(b => `<button class="${b.class || 'btn-secondary'}" onclick="${b.onclick}">${b.text}</button>`).join('')}
-            </div>
-        `;
-        modal.classList.add('show');
-    }
-
     function updateProgress(percent) {
         const progressEl = document.getElementById('download-progress');
         if (progressEl) {
@@ -430,29 +460,69 @@
         }
 
         if (!isEmbedPage()) {
-            // Show info and redirect to embed page
             const embedUrl = getEmbedUrl(docId);
             
-            showInfoModal(
-                '📚 Scribd Downloader',
-                `
+            // Create modal with instructions
+            let modal = document.getElementById('scribd-dl-modal');
+            if (!modal) {
+                modal = createModal();
+            }
+
+            const content = modal.querySelector('.modal-content');
+            content.innerHTML = `
+                <h2>📚 Scribd Downloader</h2>
+                
                 <div class="info-box">
-                    <strong>ℹ️ How it works:</strong><br><br>
-                    1. Click <strong>"Open Embed Page"</strong> below<br>
-                    2. A new page will open with the document<br>
-                    3. Click <strong>"Download PDF"</strong> button again<br>
-                    4. Wait for all pages to load<br>
-                    5. Save as PDF!
+                    <strong>⚠️ Important:</strong> Scribd blocks direct access. Follow these steps:
                 </div>
-                <p style="margin-top: 15px; font-size: 13px; color: #888;">
-                    💡 The embed page doesn't require login and shows the full document.
+
+                <ul class="step-list">
+                    <li>
+                        <span class="step-num">1</span>
+                        <span>Copy the embed URL below</span>
+                    </li>
+                    <li>
+                        <span class="step-num">2</span>
+                        <span>Open a <strong>new Incognito/Private window</strong> (Ctrl+Shift+N)</span>
+                    </li>
+                    <li>
+                        <span class="step-num">3</span>
+                        <span>Paste the URL and press Enter</span>
+                    </li>
+                    <li>
+                        <span class="step-num">4</span>
+                        <span>Click <strong>"Download PDF"</strong> button on that page</span>
+                    </li>
+                </ul>
+
+                <div class="url-box" id="embed-url">${embedUrl}</div>
+
+                <div class="btn-group">
+                    <button class="btn-success" id="btn-copy">📋 Copy URL</button>
+                    <button class="btn-secondary" id="btn-close-modal">Close</button>
+                </div>
+
+                <p style="margin-top: 15px; font-size: 12px; color: #888;">
+                    💡 Using Incognito avoids Scribd's login detection
                 </p>
-                `,
-                [
-                    { text: '🚀 Open Embed Page', class: 'btn-primary', onclick: `window.open('${embedUrl}', '_blank')` },
-                    { text: 'Close', class: 'btn-secondary', onclick: `document.getElementById('scribd-dl-modal').classList.remove('show')` }
-                ]
-            );
+            `;
+
+            modal.classList.add('show');
+
+            document.getElementById('btn-copy').onclick = () => {
+                copyToClipboard(embedUrl);
+                document.getElementById('btn-copy').innerHTML = '✅ Copied!';
+                document.getElementById('btn-copy').style.background = '#28a745';
+                setTimeout(() => {
+                    document.getElementById('btn-copy').innerHTML = '📋 Copy URL';
+                    document.getElementById('btn-copy').style.background = '';
+                }, 2000);
+            };
+
+            document.getElementById('btn-close-modal').onclick = () => {
+                modal.classList.remove('show');
+            };
+
             return;
         }
 
@@ -463,23 +533,19 @@
         try {
             showModal('🔄 Loading all pages...', false, 0);
 
-            // Step 1: Scroll through all pages
             await scrollAllPages((progress) => {
                 updateProgress(progress);
                 showModal(`📄 Loading pages... (${progress}%)`, false, progress);
             });
 
-            // Step 2: Remove toolbars
             showModal('🧹 Cleaning up interface...', false, 60);
             await sleep(500);
-            const removed = removeToolbars();
+            removeToolbars();
 
-            // Step 3: Cleanup for print
             showModal('✨ Optimizing for print...', false, 80);
             await sleep(500);
             cleanupForPrint();
 
-            // Step 4: Ready to print
             showModal('✅ Ready! Click the button below to save PDF', true, 100);
 
             btn.classList.remove('loading');
@@ -496,7 +562,6 @@
     // ==================== INITIALIZATION ====================
 
     function init() {
-        // Wait for page to load
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(createDownloadButton, 1000);
