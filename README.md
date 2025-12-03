@@ -70,6 +70,47 @@ Click 👉 [**`userscript.js`**](userscript.js) → Tampermonkey will prompt →
 
 <br/>
 
+## 🐍 Python Alternative
+
+> For developers who prefer Python or need more control
+
+### Requirements
+
+| Package | Install |
+|:--------|:--------|
+| ![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=flat-square&logo=python&logoColor=white) | [Download](https://www.python.org/downloads/) |
+| ![Chrome](https://img.shields.io/badge/Chrome-Browser-4285F4?style=flat-square&logo=googlechrome&logoColor=white) | [Download](https://www.google.com/chrome/) |
+| ![Selenium](https://img.shields.io/badge/Selenium-43B02A?style=flat-square&logo=selenium&logoColor=white) | `pip install selenium` |
+
+### Quick Start
+
+```bash
+# Clone
+git clone https://github.com/ThanhNguyxn/scribd-downloader.git
+cd scribd-downloader
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run
+python scribd-downloader.py
+```
+
+### Usage
+
+```
+Input link Scribd: https://www.scribd.com/document/123456789/Document-Name
+```
+
+The script will:
+1. 🔗 Convert URL to embed format
+2. 🌐 Open Chrome with DevTools
+3. 📜 Auto-scroll all pages
+4. 🧹 Remove toolbars
+5. 🖨️ Open print dialog
+
+<br/>
+
 ## ⚠️ Disclaimer
 
 > This tool is for **personal & educational use only**.  
