@@ -39,7 +39,125 @@
 
 <br/>
 
-## 🔧 How It Works
+## 🌐 Method 1: Tampermonkey (Recommended)
+
+### Step 1: Install Tampermonkey Extension
+
+| Browser | Install Link |
+|:-------:|:------------:|
+| <img src="https://img.shields.io/badge/Chrome-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white"/> | [Install](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) |
+| <img src="https://img.shields.io/badge/Firefox-FF7139?style=for-the-badge&logo=firefox&logoColor=white"/> | [Install](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/) |
+| <img src="https://img.shields.io/badge/Edge-0078D7?style=for-the-badge&logo=microsoftedge&logoColor=white"/> | [Install](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd) |
+
+### Step 2: Install the Script
+
+[![Install Script](https://img.shields.io/badge/Install%20Script-Greasy%20Fork-670000?style=for-the-badge&logo=greasyfork&logoColor=white)](https://greasyfork.org/en/scripts/557768-scribd-downloader)
+
+Or manually: [**`userscript.js`**](https://raw.githubusercontent.com/ThanhNguyxn/scribd-downloader/main/userscript.js)
+
+### Step 3: Use It!
+
+1. 🌐 Go to any **Scribd document** page
+2. 📥 Click the purple **"Download PDF"** button (top-right corner)
+3. 🚀 A new tab will open automatically
+4. ⬇️ Click the green **"Download PDF"** button on that page
+5. ⏳ Wait for all pages to load
+6. 🖨️ In print dialog → **Save as PDF**
+
+> 💡 **Tip:** If it redirects to login, click **"Manual (Incognito)"** and follow the instructions!
+
+<br/>
+
+---
+
+## � Method 2: Python Script
+
+> For developers who prefer command line or need automation
+
+### Requirements
+
+- ![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=flat-square&logo=python&logoColor=white) [Download Python](https://www.python.org/downloads/)
+- ![Chrome](https://img.shields.io/badge/Chrome-Browser-4285F4?style=flat-square&logo=googlechrome&logoColor=white) [Download Chrome](https://www.google.com/chrome/)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/ThanhNguyxn/scribd-downloader.git
+cd scribd-downloader
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the script
+python scribd-downloader.py
+```
+
+### Usage
+
+```
+Input link Scribd: https://www.scribd.com/document/123456789/Document-Name
+```
+
+The script will automatically:
+1. 🔗 Convert URL to embed format
+2. 🌐 Open Chrome browser
+3. 📜 Scroll through all pages
+4. 🧹 Remove toolbars & overlays
+5. 🖨️ Open print dialog → Save as PDF
+
+<br/>
+
+---
+
+## 🖨️ Print Settings (Important!)
+
+> For best PDF quality, use these settings:
+
+| Setting | Value |
+|:--------|:------|
+| **Destination** | `Save as PDF` |
+| **Margins** | `None` |
+| **Background graphics** | `✅ Enabled` |
+
+<br/>
+
+---
+
+## 📂 Project Files
+
+```
+📦 scribd-downloader
+ ┣ 📜 userscript.js          ← Tampermonkey script
+ ┣ 🐍 scribd-downloader.py   ← Python script
+ ┗ 📋 requirements.txt       ← Python dependencies
+```
+
+<br/>
+
+---
+
+## ⚠️ Disclaimer
+
+> [!CAUTION]
+> **Legal Notice:** This tool is provided for **personal and educational purposes only**.
+
+- 📚 **Educational Use:** Intended for students, researchers, and educators who need offline access to study materials
+- ⚖️ **Copyright:** Please respect intellectual property rights and Scribd's Terms of Service
+- 🚫 **No Redistribution:** Do not redistribute downloaded content commercially or publicly
+- 👤 **Your Responsibility:** You are solely responsible for how you use this tool
+
+**By using this tool, you agree that:**
+1. You will only download content you have legitimate access to
+2. You will not use it to infringe on any copyrights
+3. The authors are not liable for any misuse of this tool
+
+<br/>
+
+---
+
+<details>
+<summary><h2>�🔧 How It Works (For Developers)</h2></summary>
 
 > Understanding the technical mechanism behind this tool
 
@@ -122,114 +240,7 @@ Scribd uses an **embed URL format** (`/embeds/{document_id}/content`) that rende
 2. **Lazy loading bypass** — By scrolling through all pages, we force the browser to fetch and render every page
 3. **Native print** — Using the browser's built-in print function ensures high-quality PDF output with proper formatting
 
-<br/>
-
----
-
-<br/>
-
-## 🌐 Method 1: Tampermonkey (Recommended)
-
-### Step 1: Install Tampermonkey Extension
-
-| Browser | Install Link |
-|:-------:|:------------:|
-| <img src="https://img.shields.io/badge/Chrome-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white"/> | [Install](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) |
-| <img src="https://img.shields.io/badge/Firefox-FF7139?style=for-the-badge&logo=firefox&logoColor=white"/> | [Install](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/) |
-| <img src="https://img.shields.io/badge/Edge-0078D7?style=for-the-badge&logo=microsoftedge&logoColor=white"/> | [Install](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd) |
-
-### Step 2: Install the Script
-
-[![Install Script](https://img.shields.io/badge/Install%20Script-Greasy%20Fork-670000?style=for-the-badge&logo=greasyfork&logoColor=white)](https://greasyfork.org/en/scripts/557768-scribd-downloader)
-
-Or manually: [**`userscript.js`**](https://raw.githubusercontent.com/ThanhNguyxn/scribd-downloader/main/userscript.js)
-
-### Step 3: Use It!
-
-1. 🌐 Go to any **Scribd document** page
-2. 📥 Click the purple **"Download PDF"** button (top-right corner)
-3. 🚀 A new tab will open automatically
-4. ⬇️ Click the green **"Download PDF"** button on that page
-5. ⏳ Wait for all pages to load
-6. 🖨️ In print dialog → **Save as PDF**
-
-> 💡 **Tip:** If it redirects to login, click **"Manual (Incognito)"** and follow the instructions!
-
-<br/>
-
----
-
-## 🐍 Method 2: Python Script
-
-> For developers who prefer command line or need automation
-
-### Requirements
-
-- ![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=flat-square&logo=python&logoColor=white) [Download Python](https://www.python.org/downloads/)
-- ![Chrome](https://img.shields.io/badge/Chrome-Browser-4285F4?style=flat-square&logo=googlechrome&logoColor=white) [Download Chrome](https://www.google.com/chrome/)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/ThanhNguyxn/scribd-downloader.git
-cd scribd-downloader
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the script
-python scribd-downloader.py
-```
-
-### Usage
-
-```
-Input link Scribd: https://www.scribd.com/document/123456789/Document-Name
-```
-
-The script will automatically:
-1. 🔗 Convert URL to embed format
-2. 🌐 Open Chrome browser
-3. 📜 Scroll through all pages
-4. 🧹 Remove toolbars & overlays
-5. 🖨️ Open print dialog → Save as PDF
-
-<br/>
-
----
-
-## 🖨️ Print Settings (Important!)
-
-> For best PDF quality, use these settings:
-
-| Setting | Value |
-|:--------|:------|
-| **Destination** | `Save as PDF` |
-| **Margins** | `None` |
-| **Background graphics** | `✅ Enabled` |
-
-<br/>
-
----
-
-## 📂 Project Files
-
-```
-📦 scribd-downloader
- ┣ 📜 userscript.js          ← Tampermonkey script
- ┣ 🐍 scribd-downloader.py   ← Python script
- ┗ 📋 requirements.txt       ← Python dependencies
-```
-
-<br/>
-
----
-
-## ⚠️ Disclaimer
-
-> This tool is for **personal & educational use only**.  
-> Please respect copyright and Scribd's terms of service.
+</details>
 
 <br/>
 
