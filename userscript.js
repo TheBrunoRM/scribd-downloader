@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Scribd Downloader
 // @namespace    https://github.com/ThanhNguyxn/scribd-downloader
-// @version      2.2.1
+// @version      2.2.2
 // @description  📚 Download documents from Scribd for free as PDF - Fully automated!
 // @author       ThanhNguyxn
 // @match        https://www.scribd.com/*
@@ -487,8 +487,45 @@
             }, 3000);
         }
 
-        // Close popup after small delay
-        setTimeout(closePopup, 500);
+        // Update popup content instead of closing it (keep popup visible for credits)
+        const popupContent = document.getElementById('sd-popup-content');
+        if (popupContent) {
+            popupContent.innerHTML = `
+                <h2>✅ Tab Opened!</h2>
+                
+                <div class="sd-info" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%) !important;">
+                    🎉 <strong>Success!</strong> A new tab has been opened in the background.
+                </div>
+
+                <p style="color: #666; font-size: 13px; margin: 15px 0;">
+                    📌 <strong>Next steps:</strong><br>
+                    1. Switch to the new tab<br>
+                    2. Click the <strong style="color: #11998e;">green Download button</strong><br>
+                    3. Wait for all pages to load<br>
+                    4. Save as PDF
+                </p>
+
+                <div class="sd-btn-group">
+                    <button class="sd-btn sd-btn-close" id="sd-close-btn2">Got it!</button>
+                </div>
+
+                <div class="sd-links">
+                    <a href="${GITHUB_URL}" target="_blank" class="sd-link">⭐ GitHub</a>
+                    <a href="${SPONSOR_URL}" target="_blank" class="sd-link">💖 Sponsor</a>
+                    <a href="${DONATE_URL}" target="_blank" class="sd-link">☕ Buy me a coffee</a>
+                </div>
+
+                <p style="color: #999; font-size: 11px; margin-top: 15px;">
+                    Made with ❤️ by <a href="${GITHUB_URL}" target="_blank" style="color: #667eea;">ThanhNguyxn</a>
+                </p>
+            `;
+
+            // Re-attach close button event
+            const closeBtn2 = document.getElementById('sd-close-btn2');
+            if (closeBtn2) {
+                closeBtn2.onclick = closePopup;
+            }
+        }
     }
 
     function showManualInstructions() {
