@@ -32,7 +32,7 @@ converted_url = convert_scribd_link(input_url)
 print("Link embed:", converted_url)
 
 
-# INIT DRIVER ✅
+# INIT DRIVER
 driver = webdriver.Chrome(options=options)
 driver.get(converted_url)
 
@@ -54,9 +54,9 @@ try:
         var cookieBanner = document.querySelector('[aria-label="Cookie Consent Banner"]');
         if (cookieBanner) cookieBanner.remove();
     """)
-    print("✅ Cookie banner deleted")
+    print("[OK] Cookie banner deleted")
 except:
-    print("ℹ️ Cookie banner not present")
+    print("[INFO] Cookie banner not present")
 
 
 # Scroll all pages
@@ -68,7 +68,7 @@ for page in pages:
     )
     wait.until(lambda d: page.is_displayed())
 
-print("✅ Scrolled and loaded all pages")
+print("[OK] Scrolled and loaded all pages")
 
 
 # DELETE TOOLBARS
@@ -77,7 +77,7 @@ driver.execute_script("""
         .forEach(el => el.remove());
 """)
 
-print("✅ Toolbars removed")
+print("[OK] Toolbars removed")
 
 
 # Remove container classes
@@ -87,7 +87,7 @@ for element in elements:
         "arguments[0].setAttribute('class', '');", element
     )
 
-print("✅ Containers cleaned")
+print("[OK] Containers cleaned")
 
 
 # Inject print CSS
@@ -102,7 +102,7 @@ driver.execute_script("""
     document.head.appendChild(style);
 """)
 
-print("✅ Print CSS injected")
+print("[OK] Print CSS injected")
 
 
 # PRINT
@@ -113,3 +113,5 @@ wait.until(
 )
 
 driver.execute_script("window.print();")
+
+print("[OK] Finished!")
