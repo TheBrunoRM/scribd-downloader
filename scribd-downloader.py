@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 import sys
 
 
@@ -55,18 +56,31 @@ try:
         if (cookieBanner) cookieBanner.remove();
     """)
     print("[OK] Cookie banner deleted")
-except:
+except TimeoutException:
     print("[INFO] Cookie banner not present")
 
 
-# Scroll all pages
-pages = driver.find_elements(By.CSS_SELECTOR, "[class*='page']")
+# Get pages and scroll through them
+prev_count = 0
 
-for page in pages:
-    driver.execute_script(
-        "arguments[0].scrollIntoView({block: 'center'});", page
-    )
-    wait.until(lambda d: page.is_displayed())
+while True:
+    pages = driver.find_elements(By.CSS_SELECTOR, "[class*='page']")
+
+    for page in pages:
+        driver.execute_script(
+            "arguments[0].scrollIntoView({block: 'center'});", page
+        )
+
+    try:
+        last_page = pages[-1]
+        wait.until(lambda _: last_page.is_displayed())
+    except Exception:
+        pass
+
+    if len(pages) == prev_count:
+        break
+
+    prev_count = len(pages)
 
 print("[OK] Scrolled and loaded all pages")
 
