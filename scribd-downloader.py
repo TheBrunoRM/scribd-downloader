@@ -6,7 +6,9 @@ scrolls through the document, removes unwanted elements, and opens the print dia
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options   
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 import sys
 
@@ -39,36 +41,44 @@ else:
 converted_url = convert_scribd_link(input_url)
 print("Link embed:", converted_url)
 
-
 # Initialize the WebDriver with the specified options
 driver = webdriver.Chrome(options=options)
-
 
 # Open the webpage
 driver.get(converted_url)
 
-# Wait for the page to load
-time.sleep(2)
+wait = WebDriverWait(driver, 15)
 
-driver.execute_script("""
-    var cookieBanner = document.querySelector('[aria-label="Cookie Consent Banner"]');
-    if (cookieBanner) {
-        cookieBanner.remove();
-    }
-""")
-print("✅ Cookie banner deleted")
+wait.until(
+    EC.presence_of_element_located((By.CSS_SELECTOR, "[class*='page']"))
+)
 
-# STEP 01: SCROLL
-# Scroll from the top to the bottom of the page
-page_elements = driver.find_elements("css selector", "[class*='page']")
-for page in page_elements:
-    driver.execute_script("arguments[0].scrollIntoView();", page)
-    time.sleep(0.5)
+try:
+    wait.until(
+        EC.presence_of_element_located(
+            (By.CSS_SELECTOR, "[aria-label='Cookie Consent Banner']")
+        )
+    )
+    driver.execute_script("""
+        var cookieBanner = document.querySelector('[aria-label="Cookie Consent Banner"]');
+        if (cookieBanner) cookieBanner.remove();
+    """)
+    print("✅ Cookie banner deleted")
+except:
+    print("ℹ️ Cookie banner not present")
 
-print("Last Page") 
 
 
-time.sleep(2)
+pages = driver.find_elements(By.CSS_SELECTOR, "[class*='page']")
+
+for page in pages:
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", page)
+
+    wait.until(
+        lambda d: page.is_displayed()
+    )
+
+print("Scrolled and loaded the pages") 
 
 
 # STEP 02: DELETE DIVS - CLASS
@@ -137,6 +147,10 @@ print("✅ Print CSS injected (no margins)")
 # STEP 04: PRINT PDF
 # Scroll back to top
 driver.execute_script("window.scrollTo(0, 0);")
+
+wait.until(
+    lambda d: d.execute_script("return document.readyState") == "complete"
+)
 
 # Open print window
 driver.execute_script("window.print();")
